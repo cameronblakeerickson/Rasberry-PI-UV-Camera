@@ -2,8 +2,10 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-#quit()
+import time
 
+start= time.time()
+#quit()
 # Load image in grayscale
 img_gray = cv2.imread("out.jpg", cv2.IMREAD_GRAYSCALE)
 
@@ -65,5 +67,7 @@ if circles is not None:
         print(f"Circle center=({x},{y}), radius={r}")
 
 # Show the result
+end = time.time()     # record end time
+print(f"Execution time: {end - start:.4f} seconds")
 plt.show()
 
