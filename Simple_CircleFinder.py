@@ -9,9 +9,18 @@ start= time.time()
 # Load image in grayscale
 img_gray = cv2.imread("out.jpg", cv2.IMREAD_GRAYSCALE)
 
+#Edge detection test
+# T1=200
+# edges = cv2.Canny(img_gray, threshold1=T1, threshold2=T1*2)
+# plt.imshow(edges, cmap="gray")
+# plt.title("Canny Edges")
+# plt.axis("off")
+# plt.show();quit()
+
 
 #crop the image
-img_gray = img_gray[1320:1570, 1625:1895] #[y1:y2, x1:x2]
+#img_gray = img_gray[1320:1570, 1625:1895] #[y1:y2, x1:x2]
+
 
 
 #inspect image 
@@ -25,8 +34,9 @@ img_gray = img_gray[1320:1570, 1625:1895] #[y1:y2, x1:x2]
 img_color = cv2.cvtColor(img_gray, cv2.COLOR_GRAY2BGR)
 
 # Smooth to reduce noise
-img_blur = cv2.medianBlur(img_gray, 5)
-
+img_blur = cv2.medianBlur(img_gray, 5) #cv2.bilateralFilter(img_gray, d=15, sigmaColor=150, sigmaSpace=150)
+#img_blur0 = cv2.GaussianBlur(img_gray, (13, 13), 20)
+#img_blur = cv2.medianBlur(img_blur0, 9)
 # ~ plt.imshow(img_blur, cmap="gray")
 # ~ plt.title("Gray Image")
 # ~ plt.axis("off")
@@ -37,7 +47,7 @@ img_blur = cv2.medianBlur(img_gray, 5)
 
 # Plot image
 fig, ax = plt.subplots()
-ax.imshow(img_gray, cmap="gray")
+ax.imshow(img_blur, cmap="gray")
 ax.set_title("Detected Circles")
 ax.invert_yaxis()   # so (0,0) is top-left like in OpenCV
 
@@ -49,11 +59,11 @@ circles = cv2.HoughCircles(
     img_blur,
     cv2.HOUGH_GRADIENT,
     dp=1,
-    minDist=500,
-    param1=200,
-    param2=10,
-    minRadius=20,
-    maxRadius=300
+    minDist=200,
+    param1=400,
+    param2=5,
+    minRadius=60,
+    maxRadius=90
 )
 
 if circles is not None:
