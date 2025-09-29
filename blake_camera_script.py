@@ -4,10 +4,14 @@ from datetime import datetime
 from pathlib import Path
 from picamera2 import Picamera2
 
-# Choose folder to save images
-OUT_DIR = Path.home() / "Pictures"
-OUT_DIR.mkdir(parents=True, exist_ok=True)
+print("waiting 10 seconds")
+time.sleep(10)
 
+# Choose folder to save images
+OUT_DIR = Path(__file__).resolve().parent / "Pictures"
+#OUT_DIR = Path.home() / "Pictures"
+OUT_DIR.mkdir(parents=True, exist_ok=True)
+#print(OUT_DIR);quit()
 # Generate filename with timestamp
 stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 out_path = OUT_DIR / f"image_{stamp}.jpg"
