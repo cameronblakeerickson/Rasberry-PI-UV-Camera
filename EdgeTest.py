@@ -9,10 +9,25 @@ start= time.time()
 # Load image in grayscale
 img_gray = cv2.imread("Pictures/RecentCalibrationPicture.jpg", cv2.IMREAD_GRAYSCALE)
 
+#arguments are greyscale image, 
+#"kernal (the x pixel by x pixel square considered for the local average (must be odd)) and 
+#SigmaX=standard deviation of the Gaussian for each pixels (in pixels). 0 auto selects based off of kernal dimensions)
+img_blur = cv2.GaussianBlur(img_gray, (13, 13), 0)
+
+#Edge detection test
+T1=100
+edges = cv2.Canny(img_blur, threshold1=T1, threshold2=T1*2)
+plt.imshow(edges, cmap="gray")
+plt.title("Canny Edges")
+plt.axis("off")
+plt.show();quit()
 
 
 #crop the image
 #img_gray = img_gray[1320:1570, 1625:1895] #[y1:y2, x1:x2]
+
+
+
 
 
 #inspect image 
@@ -26,7 +41,7 @@ img_gray = cv2.imread("Pictures/RecentCalibrationPicture.jpg", cv2.IMREAD_GRAYSC
 img_color = cv2.cvtColor(img_gray, cv2.COLOR_GRAY2BGR)
 
 # Smooth to reduce noise
-#img_blur = cv2.medianBlur(img_gray, 5) #cv2.bilateralFilter(img_gray, d=15, sigmaColor=150, sigmaSpace=150)
+img_blur = cv2.medianBlur(img_gray, 5) #cv2.bilateralFilter(img_gray, d=15, sigmaColor=150, sigmaSpace=150)
 #img_blur0 = cv2.GaussianBlur(img_gray, (13, 13), 20)
 #img_blur = cv2.medianBlur(img_blur0, 9)
 # ~ plt.imshow(img_blur, cmap="gray")
@@ -35,7 +50,7 @@ img_color = cv2.cvtColor(img_gray, cv2.COLOR_GRAY2BGR)
 # ~ plt.show()
 # ~ quit()
 
-img_blur = cv2.GaussianBlur(img_gray, (13, 13), 0)
+
 
 # Plot image
 fig, ax = plt.subplots()
@@ -44,16 +59,18 @@ ax.set_title("Detected Circles")
 ax.invert_yaxis()   # so (0,0) is top-left like in OpenCV
 
 
+
+
 # Detect circles
 circles = cv2.HoughCircles(
     img_blur,
     cv2.HOUGH_GRADIENT,
-    dp=1, #1 or 2, 1 
-    minDist=30,
-    param1=200,  # upper threshold for Canny edge detector
-    param2=20, # accumulator threshold for center detection
-    minRadius=10,
-    maxRadius=60
+    dp=1,
+    minDist=200,
+    param1=400,
+    param2=5,
+    minRadius=60,
+    maxRadius=90
 )
 
 if circles is not None:

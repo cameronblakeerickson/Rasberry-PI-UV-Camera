@@ -3,7 +3,7 @@ import time
 import cv2
 from picamera2 import Picamera2, Preview
 import numpy as np
-quit()
+#quit()
 # Start a live preview window on the Pi’s desktop
 picam2 = Picamera2()
 config = picam2.create_video_configuration(main={"size": (1280, 720)})
@@ -13,7 +13,7 @@ picam2.configure(config)
 picam2.start_preview(Preview.QTGL)
 
 # Optional camera tweaks
-picam2.set_controls({"ExposureTime": 10000, "Saturation": 1.0})
+picam2.set_controls({"ExposureTime": 10000000, "Saturation": 1.0})
 
 picam2.start()
 print("Live preview running. Press Ctrl+C in the Geany terminal to stop.")

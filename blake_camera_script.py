@@ -4,8 +4,8 @@ from datetime import datetime
 from pathlib import Path
 from picamera2 import Picamera2
 
-print("waiting 10 seconds")
-time.sleep(10)
+#print("waiting 10 seconds")
+#time.sleep(10)
 
 # Choose folder to save images
 OUT_DIR = Path(__file__).resolve().parent / "Pictures"
