@@ -9,12 +9,16 @@ import os
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Join with your file name
-file_path = os.path.join(script_dir, "Pictures\ExposureTime1000000.jpg")
+fname="60microW_Exp_100000_8mm1.jpg"
+file_path = os.path.join(script_dir, "Pictures","DistributionShift", fname)
 
 
 image = cv2.imread(file_path)
 
+image=image[400:800, 800:1200]
+
 image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
 
 
 # Extract the Blue channel (OpenCV stores channels as B, G, R)
