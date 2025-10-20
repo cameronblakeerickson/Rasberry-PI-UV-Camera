@@ -12,8 +12,8 @@ import imageio.v3 as iio
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Join with your file name
-fname="test.dng"
-file_path = os.path.join(script_dir, "Pictures","DistributionShift","Bayer_data", fname)
+fname="0microWatt.dng"
+file_path = os.path.join(script_dir, "Pictures","DistributionShift","3SecExposureCalibration", fname)
 
 
 raw = rawpy.imread(file_path)
@@ -45,23 +45,36 @@ offset= lambda x,b: np.clip(x.astype(np.float32)-b,0,None)
 #blues=offset(blues,blue_black_level)
 blues=normalize(blues,blue_black_level,white_level)
 
+blues=blues[700:1000,800:1200]
+blues=blues[75:250,100:350] #good for 90
 
+print("Max Value",np.max(blues))
 
 plt.imshow(blues,cmap='gray')
-plt.title("RAW Bayer mosaic")
+plt.title(r"Lab Room Lights")
+plt.xlabel("x-pixel")
+plt.ylabel("y-pixel")
 #plt.show()
 #quit()
 
 
+mean=np.mean(blues.ravel())
+std=np.std(blues.ravel())
+print(f"mean: {mean}\n std: {std}")
+
 plt.figure()
+
+
+
 # Define bin edges so each bin covers exactly one integer value
 # e.g. [0, 1), [1, 2), ...
 #bins = np.arange(span)-0.5  # 257 edges → 256 bins
-bins = np.linspace(0, 100, 100)
+#bins = np.linspace(0, 100, 500)
+bins = np.linspace(0, 10, 1000)
 
 # Plot the histogram
 plt.hist(blues.ravel(), bins=bins, color='blue', alpha=0.7)
-plt.title("Histogram of Blue Channel")
+plt.title("Histogram of Pixel Intensities")
 plt.xlabel(f"normalized value (0–{100})")
 plt.ylabel("Frequency")
 plt.grid(True, linestyle='--', alpha=0.3)
