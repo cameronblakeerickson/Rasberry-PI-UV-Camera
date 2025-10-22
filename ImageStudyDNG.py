@@ -12,8 +12,8 @@ import imageio.v3 as iio
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Join with your file name
-fname="0microWatt.dng"
-file_path = os.path.join(script_dir, "Pictures","DistributionShift","3SecExposureCalibration", fname)
+fname="30microWatt.dng"
+file_path = os.path.join(script_dir, "Pictures","DistributionShift","3SecExposureCalibration_OffAxis", fname)
 
 
 raw = rawpy.imread(file_path)
@@ -45,8 +45,13 @@ offset= lambda x,b: np.clip(x.astype(np.float32)-b,0,None)
 #blues=offset(blues,blue_black_level)
 blues=normalize(blues,blue_black_level,white_level)
 
-blues=blues[700:1000,800:1200]
-blues=blues[75:250,100:350] #good for 90
+#goes y range then x range
+blues=blues[1200:1375,950:1150]
+
+
+#For on Axis measurements:
+#blues=blues[700:1000,800:1200]
+#blues=blues[75:250,100:350] #good for 90
 
 print("Max Value",np.max(blues))
 
@@ -70,7 +75,7 @@ plt.figure()
 # e.g. [0, 1), [1, 2), ...
 #bins = np.arange(span)-0.5  # 257 edges → 256 bins
 #bins = np.linspace(0, 100, 500)
-bins = np.linspace(0, 10, 1000)
+bins = np.linspace(0, 100, 100)
 
 # Plot the histogram
 plt.hist(blues.ravel(), bins=bins, color='blue', alpha=0.7)
