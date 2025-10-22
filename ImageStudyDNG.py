@@ -12,7 +12,7 @@ import imageio.v3 as iio
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Join with your file name
-fname="30microWatt.dng"
+fname="90microWatt.dng"
 file_path = os.path.join(script_dir, "Pictures","DistributionShift","3SecExposureCalibration_OffAxis", fname)
 
 

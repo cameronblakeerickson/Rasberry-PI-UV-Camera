@@ -137,7 +137,7 @@ m_err = result.params['m'].stderr
 b_err = result.params['b'].stderr
 mfit = ufloat(m,m_err)
 
-xerr=m*x*0.01#0.5*m #microWatts*m
+xerr=m*x*0.007#0.5*m #microWatts*m
 tot_err=np.sqrt((xerr)**2+yerr**2)
 print("xerr / yerr = ",xerr/np.mean(yerr))
 
