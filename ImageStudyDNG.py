@@ -12,8 +12,8 @@ import imageio.v3 as iio
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Join with your file name
-fname="90microWatt.dng"
-file_path = os.path.join(script_dir, "Pictures","DistributionShift","3SecExposureCalibration_OffAxis", fname)
+fname="8.dng"
+file_path = os.path.join(script_dir, "Pictures","Angle_Test", fname)
 
 
 raw = rawpy.imread(file_path)
@@ -45,18 +45,21 @@ offset= lambda x,b: np.clip(x.astype(np.float32)-b,0,None)
 #blues=offset(blues,blue_black_level)
 blues=normalize(blues,blue_black_level,white_level)
 
-#goes y range then x range
-blues=blues[1200:1375,950:1150]
+#blues=cv2.blur(blues, (120, 120)) 
+
+#Off Axis Cut - [y range : x range ] 
+#blues=blues[1150:1400,925:1175]
 
 
 #For on Axis measurements:
-#blues=blues[700:1000,800:1200]
-#blues=blues[75:250,100:350] #good for 90
+#blues=blues[750:1000,900:1150]
+
 
 print("Max Value",np.max(blues))
 
+blues=cv2.blur(blues,(120,120))
 plt.imshow(blues,cmap='gray')
-plt.title(r"Lab Room Lights")
+plt.title(r"Power Resolution After Calibration (8 mm Diameter)")
 plt.xlabel("x-pixel")
 plt.ylabel("y-pixel")
 #plt.show()
@@ -79,8 +82,8 @@ bins = np.linspace(0, 100, 100)
 
 # Plot the histogram
 plt.hist(blues.ravel(), bins=bins, color='blue', alpha=0.7)
-plt.title("Histogram of Pixel Intensities")
-plt.xlabel(f"normalized value (0–{100})")
+plt.title("Histogram of Pixel Intensities from 8mm, 90 microWatt beam")
+plt.xlabel(f"normalized pixel response (0–{100})")
 plt.ylabel("Frequency")
 plt.grid(True, linestyle='--', alpha=0.3)
 plt.show()

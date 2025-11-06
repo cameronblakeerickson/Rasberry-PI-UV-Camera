@@ -2,6 +2,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import patches
 import time
 import os
 import rawpy
@@ -12,8 +13,8 @@ import imageio.v3 as iio
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Join with your file name
-fname="90microWatt.dng"
-file_path = os.path.join(script_dir, "Pictures","DistributionShift","3SecExposureCalibration", fname)
+fname="1.dng"
+file_path = os.path.join(script_dir, "Pictures","Rail_Test_8mm_2_Sec_2", fname)
 
 
 raw = rawpy.imread(file_path)
@@ -26,11 +27,6 @@ black_levels=raw.black_level_per_channel
 blue_black_level = black_levels[bayer_pattern[np.where(bayer_pattern == 2)][0]]
 white_level=raw.white_level
 span=white_level-blue_black_level
-
-print("Black level(s):", black_levels)
-print("blue black level:", blue_black_level)
-print("white level:",raw.white_level)
-print("range:",raw.white_level-raw.black_level_per_channel[0])
 raw.close()
 
 
@@ -47,9 +43,9 @@ blues=normalize(blues,blue_black_level,white_level)
 #blues=blues[1200:1375,950:1150]
 
 #For on Axis measurements:
-blues=blues[700:1000,800:1200]
+#blues=blues[700:1000,800:1200]
 
-mask = blues > 0.3
+mask = blues > 1.0
 
 #if not np.any(mask):
 #    h, w = g.shape
@@ -58,18 +54,36 @@ mask = blues > 0.3
 wts = blues[mask]
 # coordinate grids (y rows, x cols)
 ys, xs = np.nonzero(mask)
+mask_vals = blues[ys, xs]  # intensities at those positions
 sum_w = wts.sum()
 x_c = (xs * wts).sum() / sum_w
 y_c = (ys * wts).sum() / sum_w
 print(f"Centroid at x={x_c}, y={y_c}")
 
 
-plt.imshow(blues,cmap='gray')
-plt.plot(x_c, y_c, "bo")
-plt.title(r"Center")
-plt.xlabel("x-pixel")
-plt.ylabel("y-pixel")
+# plt.imshow(blues,cmap='gray')
+# plt.plot(x_c, y_c, "bo")
+# plt.title(r"Center")
+# plt.xlabel("x-pixel")
+# plt.ylabel("y-pixel")
+
+fig, ax = plt.subplots()
+ax.imshow(blues, cmap='gray', origin='upper')
+
+# Circle with diameter 65 (radius 32.5)
+circle = patches.Circle(
+    (x_c, y_c),90,
+    edgecolor='lime', facecolor='none', linewidth=2
+)
+ax.add_patch(circle)
+
+# Optional: mark the centroid itself
+ax.plot(x_c, y_c, 'r+', markersize=10)
+
+plt.title("Mean pixel position with 65-px circle")
 plt.show()
+
+
 quit()
 
 

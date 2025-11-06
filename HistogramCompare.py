@@ -29,13 +29,13 @@ from uncertainties import ufloat
 # Path to the folder where this script is located
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
-exposure_time="3"
+exposure_time="180"
 # Join with your file name
-#powers=[15,25,35,45]#    [5,15,25,35,45] 6 second vvalues
-powers=[30,50,70,90]# 3 second values
-#powers=[60,70,80,90]#[60,70,80,90]#[60,70]# #1.5 second values
-#powers=[55,70,85,100]
-#powers=[0.4,0.6,0.8,1]
+#powers=[15,25,35,45]  #6 second values
+#powers=[30,50,70,90]  # 3 second values
+#powers=[60,70,80,90]  #[60,70,80,90]#[60,70]# #1.5 second values 1
+#powers=[55,70,85,100] # 1.5 second values 2
+powers=[0.4,0.6,0.8,1]
 
 bins=np.linspace(4, 100, 100)
 histograms=[]
@@ -46,7 +46,7 @@ mean_stds=[]
 
 for p in powers:
     fname=str(p)+"microWatt.dng"
-    file_path = os.path.join(script_dir, "Pictures","DistributionShift",exposure_time+"SecExposureCalibration_OffAxis", fname)
+    file_path = os.path.join(script_dir, "Pictures","DistributionShift",exposure_time+"SecExposureCalibration", fname)
     raw = rawpy.imread(file_path)
     bayer = raw.raw_image.copy()
     bayer_pattern=raw.raw_pattern #2 is blue, 3,1 is green, 0 is red
@@ -66,8 +66,11 @@ for p in powers:
     #blues=offset(blues,blue_black_level)
     blues=normalize(blues,blue_black_level,white_level)
 
-    blues=blues[1200:1375,950:1150]
+    #Off Axis cut
+    #blues=blues[1200:1375,950:1150]
 
+    #On axis cut:
+    blues=blues[750:1000,900:1150]
     #blues=blues[700:1000,800:1200]
     #blues=blues[75:250,100:350] #good for 90
 
@@ -137,11 +140,12 @@ m_err = result.params['m'].stderr
 b_err = result.params['b'].stderr
 mfit = ufloat(m,m_err)
 
-xerr=m*x*0.007#0.5*m #microWatts*m
+#xerr=m*x*0.007# 7% error for the high power measurements, microWatts*m
+xerr=m*0.015# error for low power measurements, microWatts*m
 tot_err=np.sqrt((xerr)**2+yerr**2)
 print("xerr / yerr = ",xerr/np.mean(yerr))
 
-result = model.fit(y, params, x=x, weights=1.0 / tot_err)
+result = model.fit(y, params, x=x, weights=1.0 / tot_err,scale_covar=False)
 
 m = result.params['m'].value
 b = result.params['b'].value
@@ -178,7 +182,7 @@ plt.errorbar(x, y, yerr=tot_err, fmt='none', elinewidth=1.5, capsize=3, label='D
 plt.plot(xfit, yfit, label=f'Fit: y = ({m:.3f} ± {m_err:.3f})x', color='tab:blue')
 plt.xlabel(r'Laser Power [$\mu$Watts]')
 plt.ylabel('ADC Mean (Normalized 0 to 100)')
-plt.title('Linear Fit')
+plt.title('180 Sec Exposure Camera Response to 8mm Beam')
 plt.legend()
 plt.grid(True, linestyle='--', alpha=0.3)
 plt.tight_layout()
