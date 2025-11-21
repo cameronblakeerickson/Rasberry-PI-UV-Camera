@@ -7,6 +7,8 @@ import time
 import os
 import rawpy
 import imageio.v3 as iio
+import pandas as pd;
+
 
 def list_files_in_folder(folder_path,files=True):
     """
@@ -38,8 +40,8 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 V_all=True
 H_all=True
 
-H_list=[1]#np.arange(1,19+1,1)# For angle scan: np.arange(3,28+1,1)
-V_list=[7,8,17]#np.arange(1,1+8,1)
+#H_list=[1]#np.arange(1,19+1,1)# For angle scan: np.arange(3,28+1,1)
+#V_list=[7,8,17]#np.arange(1,1+8,1)
 
 if V_all==True:
     V_folder_list =list_files_in_folder(os.path.join(script_dir,"..","Pictures","Calibration_8mm_100microWatt"),files=False)
@@ -95,8 +97,11 @@ for folder_name in V_folder_list:
         xpos.append(x_c)
         ypos.append(y_c)
 
-        cal=np.sum(wts)/(2.*100.)
-        sd=np.std(wts)*np.sqrt(len(wts))/(2*100)
+        #Data was taken with 
+        cal=100/(np.sum(wts)/2) #microWatts/(ptr/sec)
+        cal*=1000 #convert to nanoWatts
+        sum_sigma=np.std(wts)*np.sqrt(len(wts))
+        sd=1e5*2*sum_sigma/(np.sum(wts))**2 #nanoWatts/(ptr/sec)
         cals.append(cal)
         sds.append(sd)
 
@@ -112,6 +117,20 @@ for i in range(len(xpos)):
 
     # Optional: mark the centroid itself
      ax.plot(xpos[i], ypos[i], 'r+', markersize=10)
+
+
+output={
+"X Position [ppos]": xpos,
+"Y Position [ppos]":ypos,
+"Calibration [nW/(pstr/sec)]":cals,
+"Calibration Sigma [nW/(pstr/sec)]":sds
+}
+
+df=pd.DataFrame(output)
+
+#df.to_csv("Calibration.csv", index=False)
+#print(df)
+
 
 
 #ax2.errorbar(np.linspace(0,45,len(cals)),cals/np.max(cals),yerr=sds/np.max(cals))
