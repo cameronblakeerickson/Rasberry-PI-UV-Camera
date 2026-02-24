@@ -10,7 +10,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Join with your file name
 fname="20microW_Exp_100000_8mm2.jpg"
-file_path = os.path.join(script_dir, "Pictures","DistributionShift","JPEG_data", fname)
+file_path = os.path.join(script_dir, "Pictures","DistributionShift","FHG_Fix", fname)
 
 
 image = cv2.imread(file_path)

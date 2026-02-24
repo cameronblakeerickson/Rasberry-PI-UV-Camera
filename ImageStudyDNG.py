@@ -6,17 +6,27 @@ import time
 import os
 import rawpy
 import imageio.v3 as iio
-
+import subprocess
+from pathlib import Path
 
 # Path to the folder where this script is located
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Join with your file name
-fname="8.dng"
-file_path = os.path.join(script_dir, "Pictures","Angle_Test", fname)
+fname="Pos2_3sec.dng"
+file_path = os.path.join(script_dir, "Pictures","FHG_Fix", fname)
 
+# #Get exposure time using exiftool
+# dng = Path("your_file.dng")
+# out = subprocess.check_output(
+#     ["exiftool", "-n", "-ExposureTime", "-ShutterSpeedValue", str(dng)],
+#     text=True
+# )
+# print(out)
+# quit()
 
 raw = rawpy.imread(file_path)
+
 bayer = raw.raw_image.copy()
 bayer_pattern=raw.raw_pattern #2 is blue, 3,1 is green, 0 is red
 #finds the position of the blue pixel in the 2x2 bayer pattern
@@ -57,7 +67,7 @@ blues=normalize(blues,blue_black_level,white_level)
 
 print("Max Value",np.max(blues))
 
-blues=cv2.blur(blues,(120,120))
+#blues=cv2.blur(blues,(120,120))
 plt.imshow(blues,cmap='gray')
 plt.title(r"Power Resolution After Calibration (8 mm Diameter)")
 plt.xlabel("x-pixel")

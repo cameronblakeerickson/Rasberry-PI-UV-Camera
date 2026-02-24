@@ -67,7 +67,7 @@ class Calibration:
         J, I = np.meshgrid(j_idx, i_idx)      # I = row index, J = col index
 
         # Evaluate interpolator on all coordinates at once
-        coords = np.stack([I.ravel(), J.ravel()], axis=-1)  # shape (ny*nx, 2)
+        coords = np.stack([J.ravel(), I.ravel()], axis=-1)  # shape (ny*nx, 2)
         scale = self.calibrator(coords).reshape(image.shape)         # same shape as image
 
         return image*scale
