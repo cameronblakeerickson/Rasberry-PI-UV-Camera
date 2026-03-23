@@ -9,6 +9,13 @@ import rawpy
 import imageio.v3 as iio
 import pandas as pd;
 
+"""
+This code analyzes the DNG files from the 8mm
+From this a calibration_map.npy is generated that gives the local calibration (nW/(pstr/sec)) at each pixel. This is used in the main code to convert pixel values to irradiance values.
+
+"""
+
+
 
 def list_files_in_folder(folder_path,files=True):
     """

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import cv2
+from matplotlib.colors import LogNorm
 import numpy as np
 import matplotlib.pyplot as plt
 import time
@@ -13,9 +14,10 @@ from pathlib import Path
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Join with your file name
-fname="Pos2_3sec.dng"
-file_path = os.path.join(script_dir, "Pictures","FHG_Fix", fname)
-
+fname="No_Ring_43muW_1sec.dng"#"Ring_0mm_OffWidnow_60sec.dng"#"No_Ring_0mm_OffWidnow_4sec.dng"#"Ring_0mm_OffWidnow_60sec.dng"
+file_path = os.path.join(script_dir,".." ,"Pictures","Uncoated_Bot_Ring","Transmission_Effeciency", fname)
+print("Loading file:", file_path)
+#Pictures/Coated_Top_Ring/Window_Scan_Monday/No_Ring_0mm_OffWidnow_4sec.dng
 # #Get exposure time using exiftool
 # dng = Path("your_file.dng")
 # out = subprocess.check_output(
@@ -65,15 +67,37 @@ blues=normalize(blues,blue_black_level,white_level)
 #blues=blues[750:1000,900:1150]
 
 
-print("Max Value",np.max(blues))
+# print("Max Value",np.max(blues))
 
-#blues=cv2.blur(blues,(120,120))
-plt.imshow(blues,cmap='gray')
-plt.title(r"Power Resolution After Calibration (8 mm Diameter)")
-plt.xlabel("x-pixel")
-plt.ylabel("y-pixel")
-#plt.show()
-#quit()
+# #blues=cv2.blur(blues,(120,120))
+# plt.imshow(blues,cmap='gray')
+# plt.title(r"Power Resolution After Calibration (8 mm Diameter)")
+# plt.xlabel("x-pixel")
+# plt.ylabel("y-pixel")
+# #plt.show()
+# #quit()
+pixel_size_cm = 64e-4   # <-- your calibrated value
+
+ny, nx = blues.shape
+
+x_half = nx * pixel_size_cm / 2
+y_half = ny * pixel_size_cm / 2
+
+
+
+plt.imshow(
+    blues/blues.max(),  # Normalize to 0–100 for better visualization
+    cmap='gray',
+    extent=[-x_half, x_half, -y_half, y_half],
+    origin='lower',
+    norm=LogNorm(vmin=1e-2, vmax=1)
+)
+
+plt.title(r"Beam Profile without Ring, No processing")
+plt.xlabel("x [cm]")
+plt.ylabel("y [cm]")
+#plt.colorbar(label="Intensity")
+
 
 
 mean=np.mean(blues.ravel())
@@ -82,16 +106,16 @@ print(f"mean: {mean}\n std: {std}")
 
 plt.figure()
 
-
-
 # Define bin edges so each bin covers exactly one integer value
 # e.g. [0, 1), [1, 2), ...
-#bins = np.arange(span)-0.5  # 257 edges → 256 bins
-#bins = np.linspace(0, 100, 500)
 bins = np.linspace(0, 100, 100)
 
 # Plot the histogram
-plt.hist(blues.ravel(), bins=bins, color='blue', alpha=0.7)
+counts, bin_edges, patches = plt.hist(
+    blues.ravel(), bins=bins, color='blue', alpha=0.7
+)
+
+plt.ylim(0, counts[2])
 plt.title("Histogram of Pixel Intensities from 8mm, 90 microWatt beam")
 plt.xlabel(f"normalized pixel response (0–{100})")
 plt.ylabel("Frequency")
